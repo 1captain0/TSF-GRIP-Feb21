@@ -12,6 +12,7 @@ In this task, we will be using *Simple Linear Regression* to predict the percent
 
 ### Loading the necessay packages
 ```{r}
+library(mlmetrics)
 library(ggplot2)
 library(caTools)
 ```
