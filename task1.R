@@ -1,6 +1,7 @@
 #load necessary packages
 library(ggplot2)
 library(caTools)
+library(MLmetrics)
 
 #downloading the csv file for analysis
 url <- "https://raw.githubusercontent.com/AdiPersonalWorks/Random/master/student_scores%20-%20student_scores.csv"
@@ -88,8 +89,8 @@ cat("\n")
 cat("Evaluating the Regression Model\n")
 metrics <- data.frame(matrix(ncol = 2,nrow = 5))
 names(metrics) <- c("Metric","Value")
-mae <- MAE(training_set$Scores,predict(regressor,training_set))
-mape <- MAPE(predict(regressor,training_set),training_set$Scores)
+mae <- MAE(test_set$Scores,predict(regressor,test_set))
+mape <- MAPE(predict(regressor,test_set),test_set$Scores)
 mnames <- c("R-Squared","Adj. R-Squared","MeanAbsoluteError","MeanAbsolutePercentageError","ResidualStandardError")
 mvalues <- c(stats$r.squared,stats$adj.r.squared,mae,mape,stats$sigma)
 metrics$Metric <- mnames
