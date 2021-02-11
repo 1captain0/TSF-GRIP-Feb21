@@ -1,0 +1,159 @@
+---
+title: "TSF-GRIP-Feb 21'"
+output: html_notebook
+author: Kevin Benny
+editor_options: 
+  chunk_output_type: inline
+---
+## Data Science and Business Analytics
+### TASK 1 : Prediction using Supervised ML
+
+In this task, we will be using *Simple Linear Regression* to predict the percentage of a 'Student' based on the number of 'Study Hours' from the given dataset. We use R programming to both build our model and visualize the results. 
+
+### Loading the necessay packages
+```{r}
+library(ggplot2)
+library(caTools)
+```
+### Downloading and loading the dataset
+```{r}
+url <- "https://raw.githubusercontent.com/AdiPersonalWorks/Random/master/student_scores%20-%20student_scores.csv"
+dataset <- read.csv(url)
+```
+### Viewing the dataset
+```{r}
+head(dataset)
+```
+
+### Building a plot of the dataset
+We make a simple scatter plot to verify the graphical relation between our variables and find if they have a linear relationship if any.
+```{r}
+plot <- ggplot()+
+  geom_point(aes(x=dataset$Hours,y=dataset$Scores),col="blue")+
+  scale_x_continuous(breaks = c(1:9),limits = lim_x)+
+  scale_y_continuous(breaks = seq(0,100,by=10),limits = lim_y)+
+  xlab("Hours Studied")+ylab("Percentage Score")+
+  ggtitle("Hours vs Percentage")+
+  theme(plot.title = element_text(hjust = 0.5))
+plot
+```
+
+### Correlation
+We find the correlation between the two variables to find if there is a positive or negative correlation between them if any
+```{r}
+correlation <- cor(dataset$Hours,dataset$Scores)
+cat(paste("Correlation between Hours and Scores : ",correlation))
+
+```
+
+### Independent and Dependent Variables
+In the Simple Linear Regression we need to identify the Independent(x) and Dependent(y) variables. Here we separate them into two variables respectively 
+```{r}
+independent_var <- dataset$Hours
+dependent_var <- dataset$Scores
+print('Independent Variable : Hours')
+print('Dependent Variable : Scores')
+```
+### Testing and Training Data
+When dealing with machine learning models in general, it is always recommended to split our data into a training set and a testing set. This can easily be done using the sample.split() function of the CaTools package. A fraction of 20/80 is recommended for testing/training.
+```{r}
+set.seed(0)
+split = sample.split(dataset$Scores, SplitRatio = 0.8)
+training_set = subset(dataset, split == TRUE)
+test_set = subset(dataset, split == FALSE)
+```
+### Training the Model
+Now we have our training data ready and so the next step is to create the regression. This is done using the in-built function lm(). A summary table can also be generated but we will be looking at only the coefficients and their significance.
+```{r}
+regressor <- lm(formula = Scores ~ Hours,data = training_set)
+cat("Training Complete\n\n")
+stats <- summary(regressor)
+print("Coefficients")
+print(stats$coefficients[,c(1,4)])
+```
+### Predicting Values
+Since, we have trained our data on the *regressor* it is time to make some predictions using the testing data that we had sourced earlier and compare the results.
+```{r}
+scores <- predict(regressor,newdata = test_set)
+predicted_scores <- data.frame(test_set$Hours,test_set$Scores,scores)
+names(predicted_scores) <- c("Hours","Scores","Predicted Scores")
+rownames(predicted_scores) <- 1:nrow(predicted_scores)
+print("Comparing the actual values and the preicted values of the test data")
+predicted_scores
+```
+
+### Regression Visualization
+Now we need to visualize our *regressor* and we plot a regression line along with our training data to visually see our regression accuracy.
+```{r}
+plot <- ggplot()+
+   geom_point(aes(x=training_set$Hours,y=training_set$Scores),col="blue")+geom_line(aes(x=training_set$Hours,y=predict(regressor,newdata = training_set),colour='red'))+     xlab("Hours Studied")+ylab("Percentage Score")+
+   ggtitle("Hours vs Percentage - Regression Line")+
+   theme(plot.title = element_text(hjust = 0.5))+
+   labs(colour='RegressionLine')
+plot
+```
+### Custom Prediction
+Now we can give custom values to our *regressor* and make predictions.
+```{r}
+cat("Custom Prediction\n")
+sample <- data.frame(Hours=9.25)
+print("Hours = 9.25")
+predicted_val <- predict(regressor,sample)
+c <- paste("Predicted value = ",predicted_val)
+c
+```
+### Model Evaluation
+One of the most important things in Machine Learning is to check the various parameters of our model and evaluate the model. This can be useful when trying to improve our model. Some of evaluation parameters are the *R-Squared* , *Adjusted R-Squared* , *Mean Absolute Error* etc.
+```{r}
+cat("Evaluating the Regression Model\n")
+metrics <- data.frame(matrix(ncol = 2,nrow = 5))
+names(metrics) <- c("Metric","Value")
+mae <- MAE(test_set$Scores,predict(regressor,test_set))
+mape <- MAPE(predict(regressor,test_set),test_set$Scores)
+mnames <- c("R-Squared","Adj. R-Squared","MeanAbsoluteError","MeanAbsolutePercentageError","ResidualStandardError")
+mvalues <- c(stats$r.squared,stats$adj.r.squared,mae,mape,stats$sigma)
+metrics$Metric <- mnames
+metrics$Value <- mvalues
+metrics
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
