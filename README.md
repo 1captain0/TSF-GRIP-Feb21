@@ -10,4 +10,4 @@ Contains instructions about using the Supervised Model in Machine Learning to pr
 *task1.png* contains dataset plot  
 task1.1.png* contains regression plot  
 *task1-nb.Rmd* contains the Notebook for the script , the html output is hosted as well.  
-**Notebook hosted at ** [ClickHere](https://urk18cs250.000webhostapp.com/TSF-GRIP/Task1-nb.nb.html)
+**Notebook hosted at** [ClickHere](https://urk18cs250.000webhostapp.com/TSF-GRIP/Task1-nb.nb.html)
